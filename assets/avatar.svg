@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#2a2f5c"/>
+      <stop offset="1" stop-color="#0b0d1c"/>
+    </radialGradient>
+    <linearGradient id="klinge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9aa3b8"/>
+      <stop offset="0.5" stop-color="#f4f6fb"/>
+      <stop offset="1" stop-color="#7d869c"/>
+    </linearGradient>
+    <linearGradient id="blitz" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe14d"/>
+      <stop offset="1" stop-color="#f7931a"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <g id="schwert">
+      <polygon points="256,62 274,92 270,330 242,330 238,92" fill="url(#klinge)" stroke="#1a1d33" stroke-width="5" stroke-linejoin="round"/>
+      <line x1="256" y1="96" x2="256" y2="320" stroke="#c9cfdd" stroke-width="3"/>
+      <rect x="196" y="326" width="120" height="22" rx="11" fill="#c08a2e" stroke="#1a1d33" stroke-width="5"/>
+      <rect x="244" y="348" width="24" height="72" rx="6" fill="#5b3a1e" stroke="#1a1d33" stroke-width="5"/>
+      <circle cx="256" cy="434" r="17" fill="#c08a2e" stroke="#1a1d33" stroke-width="5"/>
+    </g>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="230" fill="none" stroke="#f7931a" stroke-opacity="0.35" stroke-width="6"/>
+  <use href="#schwert" transform="rotate(-42 256 256)"/>
+  <use href="#schwert" transform="rotate(42 256 256)"/>
+  <g filter="url(#glow)">
+    <path d="M292 96 L184 284 L248 284 L216 416 L334 218 L266 218 L306 96 Z"
+          fill="url(#blitz)" stroke="#1a1d33" stroke-width="8" stroke-linejoin="round"/>
+  </g>
+</svg>
