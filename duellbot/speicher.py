@@ -15,9 +15,9 @@ class Speicher:
         )
         self._db.commit()
 
-    def neu(self, kanal_id: int, herausforderer: int, gegner: int, spiel: str, einsatz: str) -> Duell:
+    def neu(self, kanal_id: int, herausforderer: int, gegner: int, spiel: str, einsatz_sat: int) -> Duell:
         cur = self._db.execute("INSERT INTO duelle (status, daten) VALUES (?, '')", (Status.OFFEN.value,))
-        duell = Duell(cur.lastrowid, kanal_id, herausforderer, gegner, spiel, einsatz)
+        duell = Duell(cur.lastrowid, kanal_id, herausforderer, gegner, spiel, einsatz_sat)
         self.speichern(duell)
         return duell
 

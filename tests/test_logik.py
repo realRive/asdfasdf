@@ -3,14 +3,29 @@ import hashlib
 import pytest
 
 from duellbot.logik import UNENTSCHIEDEN, Duell, DuellFehler, Status
+from duellbot.rechnung import Regeln
+from tests.hilfen import invoice
 
 A, B, SCHIRI1, SCHIRI2, FREMD = 1, 2, 10, 11, 99
 FRIST = 600
+JETZT = 1_800_000_000
+REGELN = Regeln()
+
+
+def neues_duell() -> Duell:
+    return Duell(id=1, kanal_id=5, herausforderer=A, gegner=B, spiel="CS2", einsatz_sat=150)
+
+
+def angenommenes_duell() -> Duell:
+    d = neues_duell()
+    d.annehmen(B)
+    d.invoice_einreichen(A, invoice(d.hash_a, 150, JETZT), JETZT, REGELN)
+    d.invoice_einreichen(B, invoice(d.hash_b, 150, JETZT), JETZT, REGELN)
+    return d
 
 
 def laufendes_duell() -> Duell:
-    d = Duell(id=1, kanal_id=5, herausforderer=A, gegner=B, spiel="CS2", einsatz="0,10 €")
-    d.annehmen(B)
+    d = angenommenes_duell()
     d.eingang_bestaetigen(A)
     d.eingang_bestaetigen(B)
     return d
@@ -21,7 +36,7 @@ def melden(d: Duell, nutzer: int, gewinner: int, schiri: bool = False, jetzt: fl
 
 
 def test_annehmen_erzeugt_lightning_kompatible_hashes():
-    d = Duell(1, 5, A, B, "CS2", "0,10 €")
+    d = neues_duell()
     d.annehmen(B)
     assert d.status is Status.EINSATZ_AUSSTEHEND
     assert len(bytes.fromhex(d.geheimnis_a)) == 32
@@ -30,14 +45,13 @@ def test_annehmen_erzeugt_lightning_kompatible_hashes():
 
 
 def test_nur_gegner_kann_annehmen():
-    d = Duell(1, 5, A, B, "CS2", "0,10 €")
+    d = neues_duell()
     with pytest.raises(DuellFehler):
         d.annehmen(A)
 
 
 def test_spiel_startet_erst_wenn_beide_eingang_bestaetigen():
-    d = Duell(1, 5, A, B, "CS2", "0,10 €")
-    d.annehmen(B)
+    d = angenommenes_duell()
     d.eingang_bestaetigen(A)
     assert d.status is Status.EINSATZ_AUSSTEHEND
     d.eingang_bestaetigen(B)
@@ -119,3 +133,35 @@ def test_json_rundreise():
     melden(d, A, A)
     melden(d, SCHIRI1, B, schiri=True)
     assert Duell.from_json(d.to_json()) == d
+
+
+def test_eingang_erst_nach_gepruefter_invoice():
+    d = neues_duell()
+    d.annehmen(B)
+    with pytest.raises(DuellFehler, match="Invoice"):
+        d.eingang_bestaetigen(A)
+
+
+def test_invoice_mit_fremdem_hash_wird_abgelehnt():
+    d = neues_duell()
+    d.annehmen(B)
+    # A versucht, den Hash von B (oder einen eigenen) unterzuschieben.
+    with pytest.raises(DuellFehler, match="Hash"):
+        d.invoice_einreichen(A, invoice(d.hash_b, 150, JETZT), JETZT, REGELN)
+    with pytest.raises(DuellFehler, match="Hash"):
+        d.invoice_einreichen(A, invoice("00" * 32, 150, JETZT), JETZT, REGELN)
+    assert d.invoice_a == ""
+
+
+def test_invoice_nach_eingang_nicht_mehr_aenderbar():
+    d = angenommenes_duell()
+    d.eingang_bestaetigen(A)
+    with pytest.raises(DuellFehler, match="schon bestätigt"):
+        d.invoice_einreichen(A, invoice(d.hash_a, 150, JETZT), JETZT, REGELN)
+
+
+def test_fremde_koennen_keine_invoice_einreichen():
+    d = neues_duell()
+    d.annehmen(B)
+    with pytest.raises(DuellFehler):
+        d.invoice_einreichen(FREMD, invoice(d.hash_a, 150, JETZT), JETZT, REGELN)

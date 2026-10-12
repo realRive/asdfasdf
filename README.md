@@ -6,10 +6,12 @@ Er gibt nur am Ende dem Gewinner das Geheimnis (Preimage), mit dem dieser die Za
 
 ## Ablauf
 
-1. `/duell herausfordern @gegner spiel einsatz`: Der Gegner klickt auf **Annehmen**.
+1. `/duell herausfordern @gegner spiel einsatz_sat`: Der Einsatz wird in Satoshi angegeben, z. B. 150 sat ≈ 0,10 €. Der Gegner klickt auf **Annehmen**.
 2. Der Bot zeigt zwei Hashes:
-   - **A** erstellt eine Hold-Invoice mit *Hash A*, B bezahlt sie.
-   - **B** erstellt eine Hold-Invoice mit *Hash B*, A bezahlt sie.
+   - **A** erstellt eine Hold-Invoice mit *Hash A*, **B** eine mit *Hash B*.
+   - Beide reichen sie mit `/duell invoice` ein. **Der Bot prüft Hash, Betrag, Netzwerk, Laufzeit und CLTV**
+     und postet die Invoice erst danach als geprüft.
+   - Jeder bezahlt **nur die vom Bot geprüfte Invoice** des anderen.
    - Wer die Zahlung des anderen gesperrt erhalten hat, klickt auf **Zahlung erhalten**.
 3. Das Spiel läuft. Danach melden beide `/duell ergebnis`.
    - Sind sich beide einig, steht das Ergebnis vorläufig fest.
@@ -23,6 +25,7 @@ Bei Unentschieden oder Abbruch gibt der Bot nichts frei, und beide Zahlungen geh
 | Befehl | Wer |
 |---|---|
 | `/duell herausfordern` | alle |
+| `/duell invoice` | Spieler (vor Spielbeginn) |
 | `/duell ergebnis` | Spieler, Schiedsrichter |
 | `/duell einspruch` | Spieler (während der Frist) |
 | `/duell abbrechen` | Spieler vor Spielbeginn, Schiedsrichter jederzeit |
@@ -46,9 +49,27 @@ python -m duellbot.bot
 
 Tests: `pip install pytest && python -m pytest`
 
+## Invoice-Prüfung
+
+Ohne Prüfung könnte ein Spieler eine Invoice mit dem Hash eines **eigenen** Geheimnisses einreichen
+und den Einsatz des Gegners unabhängig vom Ergebnis einlösen. Der Bot dekodiert deshalb jede
+BOLT11-Invoice selbst (`duellbot/rechnung.py`, ohne zusätzliche Abhängigkeit, getestet mit den
+Testvektoren aus der BOLT11-Spezifikation) und lehnt sie ab, wenn eines nicht stimmt:
+
+- Payment-Hash ≠ der vom Bot vorgegebene Hash
+- Betrag fehlt oder ≠ Einsatz
+- falsches Netzwerk (`NETZWERK`)
+- läuft in weniger als `MIN_RESTLAUFZEIT_MINUTEN` ab
+- CLTV-Delta kleiner als `MIN_CLTV_BLOECKE`
+
+Die Signatur wird nicht geprüft. Eine gefälschte Signatur macht die Invoice nur unbezahlbar,
+denn einlösen kann nur, wer das Preimage kennt.
+
 ## Wichtige Grenzen
 
-- **Hold-Invoices mit fremdem Hash:** Die Wallet muss Invoices mit einem vorgegebenen Payment-Hash erstellen und erst später einlösen können (bei LND z. B. `lncli addholdinvoice <hash> <betrag>` und `settleinvoice <preimage>`). Ob die Hydranet-Wallet das anbietet, ist noch zu prüfen.
+- **Hold-Invoices mit fremdem Hash:** Laut Hydranet-Dev über API/CLI möglich. Die genauen Befehle fehlen noch. Bei LND wären es z. B. `lncli addholdinvoice <hash> <betrag>` und `settleinvoice <preimage>`.
+- **Nur BOLT11:** Die Prüfung versteht Lightning-Invoices (`lnbc…`). Nutzt Hydranet (z. B. über Lithium) ein anderes Format, muss `rechnung.py` angepasst werden.
+- **„Zahlung erhalten“ beruht auf Vertrauen:** Der Bot sieht nicht, ob eine Zahlung wirklich gesperrt eingegangen ist. Mit einer Status-Abfrage über die Hydranet-API ließe sich das automatisieren.
 - **Laufzeit:** Gesperrte Zahlungen binden Kapital im Lightning-Netz und laufen nach der Invoice-Ablaufzeit bzw. dem CLTV-Limit ab. Geeignet für Matches von Minuten bis wenigen Stunden.
 - **Vertrauen:** Schiedsrichter können kein Geld behalten, aber falsch entscheiden. Deshalb sind mehrere Bestätigungen nötig.
 - **Geheimnisse** liegen in der lokalen SQLite-Datei (`duelle.db`). Wer darauf Zugriff hat, kann Ergebnisse vorwegnehmen. Schütze den Server.

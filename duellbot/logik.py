@@ -21,6 +21,8 @@ import secrets
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 
+from .rechnung import Regeln, RechnungFehler, pruefen
+
 UNENTSCHIEDEN = 0
 
 
@@ -50,10 +52,13 @@ class Duell:
     herausforderer: int
     gegner: int
     spiel: str
-    einsatz: str
+    einsatz_sat: int
     status: Status = Status.OFFEN
     geheimnis_a: str = ""
     geheimnis_b: str = ""
+    # Geprüfte Invoices: invoice_a stellt A aus (Hash A), B bezahlt sie. Umgekehrt für B.
+    invoice_a: str = ""
+    invoice_b: str = ""
     # Ein Spieler bestätigt, dass die Zahlung des anderen bei ihm gesperrt eingegangen ist.
     eingang_a: bool = False
     eingang_b: bool = False
@@ -103,9 +108,28 @@ class Duell:
         self.geheimnis_b = secrets.token_hex(32)
         self.status = Status.EINSATZ_AUSSTEHEND
 
+    def invoice_einreichen(self, nutzer: int, invoice: str, jetzt: float, regeln: Regeln) -> None:
+        """Nimmt die Invoice eines Spielers nur an, wenn Hash, Betrag und Laufzeit stimmen."""
+        self._pruefe_status(Status.EINSATZ_AUSSTEHEND)
+        self._pruefe_spieler(nutzer)
+        ist_a = nutzer == self.herausforderer
+        if self.eingang_a if ist_a else self.eingang_b:
+            raise DuellFehler("Du hast den Zahlungseingang schon bestätigt. Die Invoice kann nicht mehr geändert werden.")
+        try:
+            pruefen(invoice, self.hash_a if ist_a else self.hash_b, self.einsatz_sat, jetzt, regeln)
+        except RechnungFehler as fehler:
+            raise DuellFehler(f"Invoice abgelehnt: {fehler}") from fehler
+        invoice = invoice.strip()
+        if ist_a:
+            self.invoice_a = invoice
+        else:
+            self.invoice_b = invoice
+
     def eingang_bestaetigen(self, nutzer: int) -> None:
         self._pruefe_status(Status.EINSATZ_AUSSTEHEND)
         self._pruefe_spieler(nutzer)
+        if not (self.invoice_a if nutzer == self.herausforderer else self.invoice_b):
+            raise DuellFehler("Reiche zuerst deine Invoice mit `/duell invoice` ein. Erst die geprüfte Invoice darf bezahlt werden.")
         if nutzer == self.herausforderer:
             self.eingang_a = True
         else:

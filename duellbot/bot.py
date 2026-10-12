@@ -15,6 +15,7 @@ from discord import app_commands
 from discord.ext import commands, tasks
 
 from .logik import UNENTSCHIEDEN, Duell, DuellFehler, Status
+from .rechnung import Regeln
 from .speicher import Speicher
 
 TOKEN = os.environ.get("DISCORD_TOKEN", "")
@@ -23,6 +24,11 @@ SCHIRI_ROLLE = os.environ.get("SCHIRI_ROLLE", "Schiedsrichter")
 BENOETIGTE_STIMMEN = int(os.environ.get("BENOETIGTE_BESTAETIGUNGEN", "2"))
 FRIST_SEKUNDEN = float(os.environ.get("EINSPRUCHSFRIST_MINUTEN", "10")) * 60
 DB_PFAD = os.environ.get("DB_PFAD", "duelle.db")
+REGELN = Regeln(
+    netzwerk=os.environ.get("NETZWERK", "bc"),
+    min_restlaufzeit_sekunden=int(os.environ.get("MIN_RESTLAUFZEIT_MINUTEN", "10")) * 60,
+    min_cltv=int(os.environ.get("MIN_CLTV_BLOECKE", "40")),
+)
 
 log = logging.getLogger("duellbot")
 speicher = Speicher(DB_PFAD)
@@ -46,7 +52,7 @@ def embed(duell: Duell) -> discord.Embed:
     e = discord.Embed(title=f"Duell #{duell.id}: {duell.spiel}", colour=discord.Colour.orange())
     e.add_field(name="Herausforderer (A)", value=f"<@{duell.herausforderer}>")
     e.add_field(name="Gegner (B)", value=f"<@{duell.gegner}>")
-    e.add_field(name="Einsatz", value=duell.einsatz)
+    e.add_field(name="Einsatz", value=f"{duell.einsatz_sat} sat")
     e.add_field(name="Status", value=duell.status.value, inline=False)
 
     if duell.status is Status.EINSATZ_AUSSTEHEND:
@@ -55,14 +61,18 @@ def embed(duell: Duell) -> discord.Embed:
         e.add_field(
             name="So sperrt ihr den Einsatz",
             value=(
-                f"1. **A** erstellt eine Hold-Invoice über {duell.einsatz} mit **Hash A** und schickt sie B. B bezahlt.\n"
-                f"2. **B** erstellt eine Hold-Invoice über {duell.einsatz} mit **Hash B** und schickt sie A. A bezahlt.\n"
-                "3. Sobald die Zahlung des anderen bei dir **gesperrt eingegangen** ist, klicke „Zahlung erhalten“.\n"
+                f"1. **A** erstellt eine Hold-Invoice über **{duell.einsatz_sat} sat** mit **Hash A**, "
+                f"**B** eine mit **Hash B**. Laufzeit mindestens {REGELN.min_restlaufzeit_sekunden // 60} Min., "
+                f"CLTV mindestens {REGELN.min_cltv} Blöcke.\n"
+                "2. Reiche sie mit `/duell invoice` ein. Der Bot prüft Hash, Betrag und Laufzeit.\n"
+                "3. Bezahle **nur die Invoice, die der Bot als geprüft gepostet hat**, nie eine direkt zugeschickte.\n"
+                "4. Sobald die Zahlung des anderen bei dir **gesperrt eingegangen** ist, klicke „Zahlung erhalten“.\n"
                 "Das Spiel startet erst, wenn beide bestätigt haben."
             ),
             inline=False,
         )
-        e.add_field(name="Bestätigt", value=f"A: {'✅' if duell.eingang_a else '⏳'}  B: {'✅' if duell.eingang_b else '⏳'}")
+        e.add_field(name="Invoice geprüft", value=f"A: {'✅' if duell.invoice_a else '⏳'}  B: {'✅' if duell.invoice_b else '⏳'}")
+        e.add_field(name="Zahlung erhalten", value=f"A: {'✅' if duell.eingang_a else '⏳'}  B: {'✅' if duell.eingang_b else '⏳'}")
     elif duell.status is Status.LAEUFT:
         e.add_field(name="Ergebnis melden", value="Beide Spieler melden mit `/duell ergebnis`. Wenn ihr euch nicht einig seid, entscheiden Schiedsrichter.", inline=False)
     elif duell.status is Status.EINSPRUCHSFRIST:
@@ -143,14 +153,36 @@ async def knopf_gedrueckt(interaction: discord.Interaction) -> None:
 # --- Slash-Befehle -------------------------------------------------------------
 
 @gruppe.command(name="herausfordern", description="Fordere jemanden zu einem Duell heraus")
-@app_commands.describe(gegner="Wen forderst du heraus?", spiel="z. B. CS2 1v1 Aim-Map", einsatz="z. B. 0,10 € oder 300 sat")
-async def herausfordern(interaction: discord.Interaction, gegner: discord.Member, spiel: str, einsatz: str) -> None:
+@app_commands.describe(gegner="Wen forderst du heraus?", spiel="z. B. CS2 1v1 Aim-Map", einsatz_sat="Einsatz in Satoshi (z. B. 150 ≈ 0,10 €, je nach Kurs)")
+async def herausfordern(interaction: discord.Interaction, gegner: discord.Member, spiel: str,
+                        einsatz_sat: app_commands.Range[int, 1, 10_000_000]) -> None:
     if gegner.id == interaction.user.id or gegner.bot:
         await interaction.response.send_message("Such dir einen echten Gegner. 🙂", ephemeral=True)
         return
-    duell = speicher.neu(interaction.channel_id or 0, interaction.user.id, gegner.id, spiel, einsatz)
+    duell = speicher.neu(interaction.channel_id or 0, interaction.user.id, gegner.id, spiel, einsatz_sat)
     await interaction.response.send_message(
         content=f"{gegner.mention}, du wurdest herausgefordert!", embed=embed(duell), view=knoepfe(duell)
+    )
+
+
+@gruppe.command(name="invoice", description="Deine Hold-Invoice zur Prüfung einreichen")
+@app_commands.describe(invoice="BOLT11-Invoice (lnbc…) mit dem Hash, den der Bot dir angezeigt hat")
+async def invoice(interaction: discord.Interaction, duell_id: int, invoice: str) -> None:
+    duell = speicher.laden(duell_id)
+    if duell is None:
+        await interaction.response.send_message(f"Duell #{duell_id} gibt es nicht.", ephemeral=True)
+        return
+    try:
+        duell.invoice_einreichen(interaction.user.id, invoice, time.time(), REGELN)
+    except DuellFehler as fehler:
+        await interaction.response.send_message(str(fehler), ephemeral=True)
+        return
+    speicher.speichern(duell)
+    zahler = duell.gegner if interaction.user.id == duell.herausforderer else duell.herausforderer
+    await interaction.response.send_message(
+        content=f"✅ Invoice von {interaction.user.mention} geprüft. <@{zahler}>, bezahle **genau diese** Invoice:\n"
+                f"```{invoice.strip()}```",
+        embed=embed(duell), view=knoepfe(duell),
     )
 
 
