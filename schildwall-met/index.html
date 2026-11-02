@@ -5,30 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Schildwall Met</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Schildwall Met: Honigwein aus eigener Hand, erzählt im Stil des Teppichs von Bayeux.">
+<meta name="description" content="Schildwall Met, die Met Manufaktur: Honigwein aus eigener Hand, erzählt im Stil des Teppichs von Bayeux.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Alegreya:ital,wght@0,400;0,600;1,400&family=Alegreya+SC:wght@500;700&display=swap">
 <style>
-/* Layout: ein langer Leinenstreifen. Bordüren oben und unten, dazwischen bestickte Szenen
-   und Textfelder, die wie aufgenähte Tafeln wirken. Bewusst nur ein Look (Leinen bei Tag). */
+/* Layout: ein Leinenstreifen auf dunkelbraunem Grund, Farben aus dem Schildwall-Logo.
+   Bordüren oben und unten, dazwischen bestickte Szenen und aufgenähte Tafeln.
+   Bewusst nur ein Look (dunkler Grund, Leinen-Tafeln). */
 :root {
-  --leinen: #ebe1c8;        /* ungefärbtes Leinen, Grund */
-  --leinen-hell: #f3ecda;   /* aufgenähte Tafeln */
-  --leinen-dunkel: #d8c9a3; /* Bordürenstreifen */
-  --krapp: #9e3f2b;         /* Krapprot */
-  --ocker: #c29236;         /* Wau-Gelb */
-  --salbei: #66744a;        /* Grün */
-  --waid: #34495e;          /* Waidblau */
-  --naht: #26303d;          /* Konturstich, Text */
-  --beige: #b39d70;
+  --grund: #2e1f1a;         /* Dunkelbraun aus dem Logo, Seitengrund */
+  --text-hell: #e6dac4;     /* Pergament, Text auf dunklem Grund */
+  --rot-hell: #cf4a3c;      /* Rot für Überschriften auf dunklem Grund */
+  --leinen: #ddd1bb;        /* Pergament, Teppichgrund */
+  --leinen-hell: #e8dec9;   /* aufgenähte Tafeln */
+  --leinen-dunkel: #c9b99b; /* Bordürenstreifen */
+  --krapp: #a8291f;         /* Axtrot */
+  --ocker: #a37a4c;         /* Messing */
+  --salbei: #6b4a35;        /* Hornbraun */
+  --waid: #3a2620;          /* Holzbraun */
+  --naht: #24170f;          /* Konturstich, Text */
+  --beige: #b8a587;
 
   --f-titel: "Uncial Antiqua", "Luminari", Georgia, serif;
   --f-text: "Alegreya", Georgia, "Times New Roman", serif;
   --f-label: "Alegreya SC", "Alegreya", Georgia, serif;
 
   --naht-strich: 2px dashed var(--naht);
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -37,17 +41,17 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  color: var(--naht);
+  color: var(--text-hell);
   font-family: var(--f-text);
   font-size: 1.1rem;
   line-height: 1.6;
-  background-color: var(--leinen);
+  background-color: var(--grund);
   background-image:
-    repeating-linear-gradient(0deg, rgb(110 85 40 / .06) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgb(110 85 40 / .05) 0 1px, transparent 1px 4px);
+    repeating-linear-gradient(0deg, rgb(230 210 180 / .035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(230 210 180 / .03) 0 1px, transparent 1px 4px);
 }
 
-a { color: var(--krapp); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a { color: var(--rot-hell); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:focus-visible, button:focus-visible, .fries:focus-visible {
   outline: 3px solid var(--ocker); outline-offset: 3px;
 }
@@ -68,29 +72,29 @@ a:focus-visible, button:focus-visible, .fries:focus-visible {
   gap: .75rem 2rem; padding-block: 1rem;
 }
 .marke {
-  font-family: var(--f-titel); font-size: 1.5rem; color: var(--naht); text-decoration: none;
+  font-family: var(--f-titel); font-size: 1.5rem; color: var(--text-hell); text-decoration: none;
   display: flex; align-items: center; gap: .6rem;
 }
 .marke svg { width: 40px; height: 40px; flex: none; }
 .kopf nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
 .kopf nav a {
   font-family: var(--f-label); font-size: 1.05rem; letter-spacing: .06em;
-  color: var(--waid); text-decoration: none; border-bottom: 2px dashed transparent;
+  color: var(--beige); text-decoration: none; border-bottom: 2px dashed transparent;
 }
-.kopf nav a:hover { border-bottom-color: var(--krapp); color: var(--krapp); }
+.kopf nav a:hover { border-bottom-color: var(--rot-hell); color: var(--rot-hell); }
 
 /* Entwurfshinweis */
 .entwurf {
   margin-block: .5rem 0; padding: .6rem .9rem; font-size: .95rem;
-  border: 2px dashed var(--ocker); background: var(--leinen-hell);
+  border: 2px dashed var(--ocker); background: var(--leinen-hell); color: var(--naht);
 }
 
 /* Hero */
 .hero .innen { padding-block: 2.5rem 1.5rem; display: grid; gap: 1rem; }
-.augenbraue { font-family: var(--f-label); letter-spacing: .12em; color: var(--krapp); margin: 0; font-size: 1.05rem; }
+.augenbraue { font-family: var(--f-label); letter-spacing: .12em; color: var(--rot-hell); margin: 0; font-size: 1.05rem; }
 h1, h2, h3 { font-family: var(--f-titel); font-weight: 400; text-wrap: balance; line-height: 1.15; margin: 0; }
-h1 { font-size: clamp(2.6rem, 8vw, 5.2rem); color: var(--naht); letter-spacing: .01em; }
-h1 .lat { display: block; font-size: .32em; color: var(--waid); letter-spacing: .2em; margin-bottom: .4rem; }
+h1 { font-size: clamp(2.6rem, 8vw, 5.2rem); color: var(--text-hell); letter-spacing: .01em; }
+h1 .lat { display: block; font-size: .32em; color: var(--beige); letter-spacing: .2em; margin-bottom: .4rem; }
 .lead { max-width: 38rem; font-size: 1.25rem; margin: 0; }
 .knoepfe { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .5rem; }
 .knopf {
@@ -98,28 +102,28 @@ h1 .lat { display: block; font-size: .32em; color: var(--waid); letter-spacing: 
   letter-spacing: .06em; text-decoration: none; color: var(--leinen-hell); background: var(--krapp);
   outline: 2px dashed var(--leinen-hell); outline-offset: -6px; border: 0; cursor: pointer;
 }
-.knopf.zweit { background: var(--waid); }
-.knopf:hover { background: var(--naht); }
+.knopf.zweit { background: var(--salbei); }
+.knopf:hover { background: var(--naht); color: var(--text-hell); }
 
 /* Der Teppich */
-.teppich { border-block: 3px solid var(--naht); background: var(--leinen); }
+.teppich { border-block: 3px solid var(--krapp); background: var(--leinen); }
 .fries { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-color: var(--beige) transparent; }
 .fries svg { display: block; width: 100%; min-width: 1100px; height: auto; }
-.fries-hinweis { font-size: .95rem; font-style: italic; margin: .6rem 0 0; color: var(--waid); }
+.fries-hinweis { font-size: .95rem; font-style: italic; margin: .6rem 0 0; color: var(--beige); }
 @media (min-width: 1100px) { .fries-hinweis .mobil { display: none; } }
 
 /* Abschnitte */
 section.abschnitt .innen { padding-block: 3.5rem; display: grid; gap: 1.75rem; }
 .kopfzeile { display: grid; gap: .4rem; max-width: 42rem; }
-h2 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); color: var(--krapp); }
+h2 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); color: var(--rot-hell); }
 .kopfzeile p { margin: 0; }
-.titulus { font-family: var(--f-titel); color: var(--waid); letter-spacing: .18em; font-size: .95rem; }
+.titulus { font-family: var(--f-titel); color: var(--beige); letter-spacing: .18em; font-size: .95rem; }
 
 /* Sorten: aufgenähte Tafeln */
 .sorten { display: grid; grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr)); gap: 1.5rem; }
 .tafel {
-  background: var(--leinen-hell); border: 3px solid var(--naht);
-  outline: 2px dashed var(--beige); outline-offset: -10px;
+  background: var(--leinen-hell); color: var(--naht); border: 3px solid var(--krapp);
+  outline: 2px dashed var(--salbei); outline-offset: -10px;
   padding: 1.6rem 1.5rem 1.4rem; display: grid; gap: .6rem; align-content: start; min-width: 0;
 }
 .tafel svg { width: 72px; height: 72px; }
@@ -132,17 +136,18 @@ h2 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); color: var(--krapp); }
 }
 .angaben dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .angaben dd { margin: 0; }
-.hinweis { font-size: .95rem; font-style: italic; color: var(--waid); margin: 0; }
+.hinweis { font-size: .95rem; font-style: italic; color: var(--beige); margin: 0; }
+.tafel .hinweis { color: var(--salbei); }
 
 /* Ablauf */
 .ablauf { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.25rem; position: relative; }
-.ablauf li { display: grid; gap: .35rem; align-content: start; padding-top: 1rem; border-top: 3px dashed var(--salbei); min-width: 0; }
-.ablauf .ziffer { font-family: var(--f-titel); font-size: 1.9rem; color: var(--ocker); line-height: 1; -webkit-text-stroke: .6px var(--naht); }
+.ablauf li { display: grid; gap: .35rem; align-content: start; padding-top: 1rem; border-top: 3px dashed var(--ocker); min-width: 0; }
+.ablauf .ziffer { font-family: var(--f-titel); font-size: 1.9rem; color: var(--rot-hell); line-height: 1; }
 .ablauf h3 { font-size: 1.25rem; }
 .ablauf p { margin: 0; font-size: 1.02rem; }
 
 /* Termine */
-.termine-rahmen { overflow-x: auto; border: 3px solid var(--naht); background: var(--leinen-hell); }
+.termine-rahmen { overflow-x: auto; border: 3px solid var(--krapp); background: var(--leinen-hell); color: var(--naht); }
 table { width: 100%; border-collapse: collapse; min-width: 30rem; font-variant-numeric: tabular-nums; }
 th, td { text-align: left; padding: .75rem 1rem; border-bottom: var(--naht-strich); vertical-align: top; }
 tr:last-child td { border-bottom: 0; }
@@ -158,7 +163,7 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 
 /* Fuß */
 .fuss .innen { padding-block: 1.5rem 2rem; display: flex; flex-wrap: wrap; gap: .75rem 2rem; justify-content: space-between; align-items: baseline; }
-.fuss .finis { font-family: var(--f-titel); letter-spacing: .3em; color: var(--waid); }
+.fuss .finis { font-family: var(--f-titel); letter-spacing: .3em; color: var(--beige); }
 .fuss ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.25rem; flex-wrap: wrap; }
 
 /* Stickerei im SVG */
@@ -173,34 +178,34 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <pattern id="gelegt" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
-      <line x1="0" y1="0" x2="0" y2="5" stroke="#26303d" stroke-opacity=".13" stroke-width="1.2"/>
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#24170f" stroke-opacity=".13" stroke-width="1.2"/>
     </pattern>
     <filter id="wolle" x="-5%" y="-5%" width="110%" height="110%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="1.8"/>
     </filter>
     <pattern id="borte" width="240" height="56" patternUnits="userSpaceOnUse">
-      <rect width="240" height="56" fill="#d8c9a3"/>
+      <rect width="240" height="56" fill="#c9b99b"/>
       <rect y="0" width="240" height="56" fill="url(#gelegt)"/>
-      <line x1="0" y1="3" x2="240" y2="3" stroke="#26303d" stroke-width="3"/>
-      <line x1="0" y1="53" x2="240" y2="53" stroke="#26303d" stroke-width="3"/>
+      <line x1="0" y1="3" x2="240" y2="3" stroke="#24170f" stroke-width="3"/>
+      <line x1="0" y1="53" x2="240" y2="53" stroke="#24170f" stroke-width="3"/>
       <!-- schräge Stege, wie im Original -->
-      <path d="M2 50 L22 6 L30 6 L10 50z" fill="#9e3f2b" class="st"/>
-      <path d="M122 50 L142 6 L150 6 L130 50z" fill="#66744a" class="st"/>
+      <path d="M2 50 L22 6 L30 6 L10 50z" fill="#a8291f" class="st"/>
+      <path d="M122 50 L142 6 L150 6 L130 50z" fill="#6b4a35" class="st"/>
       <!-- Vogel -->
       <g transform="translate(72 40)">
-        <path d="M-16 -6 Q-4 -20 12 -12 Q16 -4 8 0 Q-6 4 -16 -6z" fill="#c29236" class="st"/>
-        <path d="M-16 -6 L-28 -14 L-26 -2z" fill="#34495e" class="st"/>
-        <circle cx="12" cy="-16" r="5" fill="#c29236" class="st"/>
-        <path d="M16 -17 L23 -15 L16 -13z" fill="#9e3f2b"/>
+        <path d="M-16 -6 Q-4 -20 12 -12 Q16 -4 8 0 Q-6 4 -16 -6z" fill="#a37a4c" class="st"/>
+        <path d="M-16 -6 L-28 -14 L-26 -2z" fill="#3a2620" class="st"/>
+        <circle cx="12" cy="-16" r="5" fill="#a37a4c" class="st"/>
+        <path d="M16 -17 L23 -15 L16 -13z" fill="#a8291f"/>
         <path d="M-6 -12 Q2 -26 10 -24" fill="none" class="st"/>
         <line x1="-2" y1="1" x2="-4" y2="10" class="st"/><line x1="4" y1="0" x2="5" y2="10" class="st"/>
       </g>
       <!-- Tier -->
       <g transform="translate(192 44)">
-        <path d="M-20 -14 Q0 -24 18 -14 Q20 -6 14 -4 L-16 -4 Q-22 -8 -20 -14z" fill="#34495e" class="st"/>
-        <circle cx="21" cy="-19" r="6" fill="#34495e" class="st"/>
-        <path d="M24 -24 L27 -31 L28 -22z" fill="#34495e"/>
+        <path d="M-20 -14 Q0 -24 18 -14 Q20 -6 14 -4 L-16 -4 Q-22 -8 -20 -14z" fill="#3a2620" class="st"/>
+        <circle cx="21" cy="-19" r="6" fill="#3a2620" class="st"/>
+        <path d="M24 -24 L27 -31 L28 -22z" fill="#3a2620"/>
         <line x1="-14" y1="-5" x2="-16" y2="6" class="st"/><line x1="-7" y1="-5" x2="-6" y2="6" class="st"/>
         <line x1="7" y1="-5" x2="6" y2="6" class="st"/><line x1="13" y1="-5" x2="15" y2="6" class="st"/>
         <path d="M-20 -12 Q-32 -22 -26 -32 Q-22 -36 -20 -30" fill="none" class="st"/>
@@ -215,9 +220,9 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
   <div class="innen">
     <a class="marke" href="#start" aria-label="Schildwall Met, zum Anfang">
       <svg viewBox="-24 -24 48 48" aria-hidden="true">
-        <circle r="21" fill="#9e3f2b" class="st"/>
+        <circle r="21" fill="#a8291f" class="st"/>
         <path d="M0 -21 V21 M-21 0 H21" class="st-fein"/>
-        <circle r="6" fill="#c29236" class="st"/>
+        <circle r="6" fill="#a37a4c" class="st"/>
       </svg>
       Schildwall Met
     </a>
@@ -238,7 +243,7 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 <main id="start">
   <section class="hero">
     <div class="innen">
-      <p class="augenbraue">Met aus eigener Hand</p>
+      <p class="augenbraue">Die Met Manufaktur</p>
       <h1><span class="lat">HIC EST</span>Schildwall Met</h1>
       <p class="lead">Honigwein, in kleinen Mengen angesetzt, mit Geduld vergoren und monatelang gereift. Für die Tafel, das Lager und alle, die zusammenstehen.</p>
       <div class="knoepfe">
@@ -369,7 +374,7 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 
 <script>
 (function () {
-  const C = { krapp:'#9e3f2b', ocker:'#c29236', salbei:'#66744a', waid:'#34495e', naht:'#26303d', leinen:'#f1e8d2', beige:'#b39d70', grau:'#8d8f86' };
+  const C = { krapp:'#a8291f', ocker:'#a37a4c', salbei:'#6b4a35', waid:'#3a2620', naht:'#24170f', leinen:'#e8dec9', beige:'#b8a587', grau:'#8c7c6a' };
 
   /* Arm als zwei Linien: dunkle Kontur, farbige Füllung, helle Hand */
   function arm(x1, y1, x2, y2, c) {
