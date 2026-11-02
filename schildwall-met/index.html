@@ -75,7 +75,15 @@ a:focus-visible, button:focus-visible, .fries:focus-visible {
   font-family: var(--f-titel); font-size: 1.5rem; color: var(--text-hell); text-decoration: none;
   display: flex; align-items: center; gap: .6rem;
 }
-.marke svg { width: 40px; height: 40px; flex: none; }
+.marke { gap: .9rem; }
+.marke .logo { width: 88px; height: 88px; flex: none; filter: drop-shadow(0 2px 4px rgb(0 0 0 / .4)); }
+.marke-text { display: grid; line-height: 1.05; }
+.marke-name { font-family: var(--f-label); font-weight: 700; font-size: 1.7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--leinen); }
+.marke-met { font-family: var(--f-label); font-weight: 700; font-size: 1.05rem; letter-spacing: .5em; text-transform: uppercase; color: var(--rot-hell);
+  display: flex; align-items: center; gap: .5rem; }
+.marke-met::before, .marke-met::after { content: ""; flex: 1; height: 1px; background: var(--krapp); }
+.marke-zusatz { font-family: var(--f-label); font-size: .78rem; letter-spacing: .28em; text-transform: uppercase; color: var(--beige); margin-top: .2rem; }
+@media (max-width: 420px) { .marke .logo { width: 68px; height: 68px; } .marke-name { font-size: 1.35rem; } }
 .kopf nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
 .kopf nav a {
   font-family: var(--f-label); font-size: 1.05rem; letter-spacing: .06em;
@@ -241,12 +249,39 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 <header class="kopf">
   <div class="innen">
     <a class="marke" href="#start" aria-label="Schildwall Met, zum Anfang">
-      <svg viewBox="-24 -24 48 48" aria-hidden="true">
-        <circle r="21" fill="#a8291f" class="st"/>
-        <path d="M0 -21 V21 M-21 0 H21" class="st-fein"/>
-        <circle r="6" fill="#a37a4c" class="st"/>
+      <svg class="logo" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false">
+        <circle r="97" fill="#2e1f1a" stroke="#a8291f" stroke-width="3"/>
+        <circle r="91" fill="none" stroke="#6b4a35" stroke-width="1"/>
+        <g fill="#c9b99b" stroke="#c9b99b" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" fill-opacity="1"><path fill="none" transform="translate(0.00 -79.00) rotate(0.00)" d="M2.5 -7 L-2.5 -2.5 L2.5 2.5 L-2.5 7"/><path fill="none" transform="translate(14.95 -77.57) rotate(10.91)" d="M2.5 -6 L-2 -1.5 L2.5 3"/><path fill="none" transform="translate(29.36 -73.34) rotate(21.82)" d="M0 -7 V7"/><path fill="none" transform="translate(42.71 -66.46) rotate(32.73)" d="M-2 7 V-7 L3 -2.5"/><path fill="none" transform="translate(54.52 -57.17) rotate(43.64)" d="M-4 -7 V7 L4 -7 V7 Z"/><path fill="none" transform="translate(64.35 -45.82) rotate(54.55)" d="M-2 7 V-7 L3 -4 L-2 -1"/><path fill="none" transform="translate(71.86 -32.82) rotate(65.45)" d="M-2 7 V-7 L3 -4 M-2 -2.5 L3 0.5"/><path fill="none" transform="translate(76.77 -18.62) rotate(76.36)" d="M-2 7 V-7 L3 -2.5"/><path fill="none" transform="translate(78.91 -3.76) rotate(87.27)" d="M-2 7 V-7 L3 -2.5"/><g transform="translate(78.20 11.24) rotate(98.18)"><circle cy="-3" r="1.5"/><circle cy="3" r="1.5"/></g><path fill="none" transform="translate(74.66 25.84) rotate(109.09)" d="M-4 7 V-7 L4 0 M4 7 V-7 L-4 0"/><path fill="none" transform="translate(68.42 39.50) rotate(120.00)" d="M-4 7 V-7 L0 -3 L4 -7 V7"/><path fill="none" transform="translate(59.70 51.73) rotate(130.91)" d="M0 7 V-7 M-4 -3 L0 -7 L4 -3"/><g transform="translate(48.83 62.10) rotate(141.82)"><circle cy="-3" r="1.5"/><circle cy="3" r="1.5"/></g><path fill="none" transform="translate(36.20 70.22) rotate(152.73)" d="M-4 -7 V7 L4 -7 V7 Z"/><path fill="none" transform="translate(22.26 75.80) rotate(163.64)" d="M0 -7 V7"/><path fill="none" transform="translate(7.51 78.64) rotate(174.55)" d="M-4 7 V-7 L0 -3 L4 -7 V7"/><g transform="translate(-7.51 78.64) rotate(185.45)"><circle cy="-3" r="1.5"/><circle cy="3" r="1.5"/></g><path fill="none" transform="translate(-22.26 75.80) rotate(196.36)" d="M-4 7 V-7 L4 0 M4 7 V-7 L-4 0"/><path fill="none" transform="translate(-36.20 70.22) rotate(207.27)" d="M-4 7 V-7 L0 -3 L4 -7 V7"/><path fill="none" transform="translate(-48.83 62.10) rotate(218.18)" d="M0 7 V-7 M-4 -3 L0 -7 L4 -3"/><g transform="translate(-59.70 51.73) rotate(229.09)"><circle cy="-3" r="1.5"/><circle cy="3" r="1.5"/></g><path fill="none" transform="translate(-68.42 39.50) rotate(240.00)" d="M-4 7 V-7 L4 0 M4 7 V-7 L-4 0"/><path fill="none" transform="translate(-74.66 25.84) rotate(250.91)" d="M-2 7 V-7 L3 -4 M-2 -2.5 L3 0.5"/><path fill="none" transform="translate(-78.20 11.24) rotate(261.82)" d="M0 -7 V7 M-3 -2 L3 2"/><path fill="none" transform="translate(-78.91 -3.76) rotate(272.73)" d="M-3 7 V-7 L3 -3 V7"/><path fill="none" transform="translate(-76.77 -18.62) rotate(283.64)" d="M-2 7 V-7 M-2 -2.5 L3 -6.5 M-2 1.5 L3 -2.5"/><path fill="none" transform="translate(-71.86 -32.82) rotate(294.55)" d="M-2 7 V-7 L3 -4 M-2 -2.5 L3 0.5"/><path fill="none" transform="translate(-64.35 -45.82) rotate(305.45)" d="M2.5 -6 L-2 -1.5 L2.5 3"/><path fill="none" transform="translate(-54.52 -57.17) rotate(316.36)" d="M0 7 V-7 M-4 -3 L0 -7 L4 -3"/><path fill="none" transform="translate(-42.71 -66.46) rotate(327.27)" d="M-3 7 V-7 L3 -3 V7"/><path fill="none" transform="translate(-29.36 -73.34) rotate(338.18)" d="M-2 7 V-7 L3 -4 L-2 -1 L3 7"/><g transform="translate(-14.95 -77.57) rotate(349.09)"><circle cy="-3" r="1.5"/><circle cy="3" r="1.5"/></g></g>
+        <circle r="66" fill="#ddd1bb" stroke="#6b4a35" stroke-width="3.5"/>
+        <circle r="66" fill="url(#gelegt)" opacity=".6"/>
+        <!-- Schaft -->
+        <path d="M-3.6 -50 L-4 58 Q0 61 4 58 L3.6 -50z" fill="#3a2620" stroke="#24170f" stroke-width="1.2"/>
+        <path d="M-1 -40 V54" stroke="#6b4a35" stroke-width=".8"/>
+        <!-- Bartaxt: Tülle, Nacken, Blatt mit Bart und geschliffener Schneide -->
+        <path d="M-6 -50 H6 V-30 H-6z" fill="#5a4a40" stroke="#24170f" stroke-width="1.4"/>
+        <path d="M-6 -46 H-11 V-34 H-6" fill="#5a4a40" stroke="#24170f" stroke-width="1.4"/>
+        <g transform="translate(0 4) translate(6 -40) scale(.88) translate(-6 40)">
+        <path d="M6 -48 C17 -49 27 -53 38 -60 C49 -42 48 -16 36 2 C27 -6 22 -18 17 -26 C13 -31 9 -32 6 -32z" fill="#a8291f" stroke="#24170f" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M37 -55 C45 -40 45 -17 35 -2 C39 -19 39 -38 33 -52z" fill="#cf4a3c"/>
+        <path d="M9 -44 C18 -45 25 -48 31 -52" fill="none" stroke="#6e1a14" stroke-width="1.2" stroke-dasharray="3 1.8"/>
+        </g>
+        <circle cx="0" cy="-40" r="1.8" fill="#c9b99b"/>
+        <path d="M0 -24 l3.5 5 l-3.5 5 l-3.5 -5z" fill="#a8291f" stroke="#24170f" stroke-width=".8"/>
+        <!-- Wicklung und Schnüre -->
+        <path d="M-4.4 -6 L4.4 -2 M-4.4 -2 L4.4 2 M-4.4 2 L4.4 6 M-4.4 -4 L4.4 -8" stroke="#a37a4c" stroke-width="1.5"/>
+        <path d="M0 0 L-40 14 M0 0 L-20 24 M0 0 L40 14 M0 0 L20 24" stroke="#a37a4c" stroke-width="1.1" fill="none"/>
+        <!-- Trinkhörner -->
+        <g id="logo-horn">
+          <path d="M-1 38 Q-26 38 -42 10 L-50 19 Q-32 47 -1 38z" fill="#6b4a35" stroke="#24170f" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M-36 14 L-45 23 M-22 26 L-27 34" stroke="#a37a4c" stroke-width="2"/>
+          <ellipse cx="-46" cy="14.5" rx="3" ry="6.4" transform="rotate(40 -46 14.5)" fill="#24170f" stroke="#a37a4c" stroke-width="1.4"/>
+          <circle cx="-40" cy="14" r="2" fill="none" stroke="#a37a4c" stroke-width="1"/>
+          <circle cx="-20" cy="24" r="2" fill="none" stroke="#a37a4c" stroke-width="1"/>
+        </g>
+        <use href="#logo-horn" transform="scale(-1 1)"/>
       </svg>
-      Schildwall Met
+      <span class="marke-text"><span class="marke-name">Schildwall</span><span class="marke-met">Met</span><span class="marke-zusatz">Die Met Manufaktur</span></span>
     </a>
     <nav aria-label="Hauptnavigation">
       <ul>
