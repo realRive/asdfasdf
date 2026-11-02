@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schildwall Met</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Schildwall Met: Honigwein aus eigener Hand, erzählt im Stil des Teppichs von Bayeux.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Alegreya:ital,wght@0,400;0,600;1,400&family=Alegreya+SC:wght@500;700&display=swap">
+<style>
+/* Layout: ein langer Leinenstreifen. Bordüren oben und unten, dazwischen bestickte Szenen
+   und Textfelder, die wie aufgenähte Tafeln wirken. Bewusst nur ein Look (Leinen bei Tag). */
+:root {
+  --leinen: #ebe1c8;        /* ungefärbtes Leinen, Grund */
+  --leinen-hell: #f3ecda;   /* aufgenähte Tafeln */
+  --leinen-dunkel: #d8c9a3; /* Bordürenstreifen */
+  --krapp: #9e3f2b;         /* Krapprot */
+  --ocker: #c29236;         /* Wau-Gelb */
+  --salbei: #66744a;        /* Grün */
+  --waid: #34495e;          /* Waidblau */
+  --naht: #26303d;          /* Konturstich, Text */
+  --beige: #b39d70;
+
+  --f-titel: "Uncial Antiqua", "Luminari", Georgia, serif;
+  --f-text: "Alegreya", Georgia, "Times New Roman", serif;
+  --f-label: "Alegreya SC", "Alegreya", Georgia, serif;
+
+  --naht-strich: 2px dashed var(--naht);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  color: var(--naht);
+  font-family: var(--f-text);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  background-color: var(--leinen);
+  background-image:
+    repeating-linear-gradient(0deg, rgb(110 85 40 / .06) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(110 85 40 / .05) 0 1px, transparent 1px 4px);
+}
+
+a { color: var(--krapp); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, .fries:focus-visible {
+  outline: 3px solid var(--ocker); outline-offset: 3px;
+}
+
+.innen {
+  max-width: 68rem;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Bordüre */
+.borte { display: block; width: 100%; height: 56px; }
+
+/* Kopf */
+.kopf .innen {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .75rem 2rem; padding-block: 1rem;
+}
+.marke {
+  font-family: var(--f-titel); font-size: 1.5rem; color: var(--naht); text-decoration: none;
+  display: flex; align-items: center; gap: .6rem;
+}
+.marke svg { width: 40px; height: 40px; flex: none; }
+.kopf nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+.kopf nav a {
+  font-family: var(--f-label); font-size: 1.05rem; letter-spacing: .06em;
+  color: var(--waid); text-decoration: none; border-bottom: 2px dashed transparent;
+}
+.kopf nav a:hover { border-bottom-color: var(--krapp); color: var(--krapp); }
+
+/* Entwurfshinweis */
+.entwurf {
+  margin-block: .5rem 0; padding: .6rem .9rem; font-size: .95rem;
+  border: 2px dashed var(--ocker); background: var(--leinen-hell);
+}
+
+/* Hero */
+.hero .innen { padding-block: 2.5rem 1.5rem; display: grid; gap: 1rem; }
+.augenbraue { font-family: var(--f-label); letter-spacing: .12em; color: var(--krapp); margin: 0; font-size: 1.05rem; }
+h1, h2, h3 { font-family: var(--f-titel); font-weight: 400; text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2.6rem, 8vw, 5.2rem); color: var(--naht); letter-spacing: .01em; }
+h1 .lat { display: block; font-size: .32em; color: var(--waid); letter-spacing: .2em; margin-bottom: .4rem; }
+.lead { max-width: 38rem; font-size: 1.25rem; margin: 0; }
+.knoepfe { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .5rem; }
+.knopf {
+  display: inline-block; padding: .65rem 1.2rem; font-family: var(--f-label); font-size: 1.05rem;
+  letter-spacing: .06em; text-decoration: none; color: var(--leinen-hell); background: var(--krapp);
+  outline: 2px dashed var(--leinen-hell); outline-offset: -6px; border: 0; cursor: pointer;
+}
+.knopf.zweit { background: var(--waid); }
+.knopf:hover { background: var(--naht); }
+
+/* Der Teppich */
+.teppich { border-block: 3px solid var(--naht); background: var(--leinen); }
+.fries { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-color: var(--beige) transparent; }
+.fries svg { display: block; width: 100%; min-width: 1100px; height: auto; }
+.fries-hinweis { font-size: .95rem; font-style: italic; margin: .6rem 0 0; color: var(--waid); }
+@media (min-width: 1100px) { .fries-hinweis .mobil { display: none; } }
+
+/* Abschnitte */
+section.abschnitt .innen { padding-block: 3.5rem; display: grid; gap: 1.75rem; }
+.kopfzeile { display: grid; gap: .4rem; max-width: 42rem; }
+h2 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); color: var(--krapp); }
+.kopfzeile p { margin: 0; }
+.titulus { font-family: var(--f-titel); color: var(--waid); letter-spacing: .18em; font-size: .95rem; }
+
+/* Sorten: aufgenähte Tafeln */
+.sorten { display: grid; grid-template-columns: repeat(auto-fit, minmax(16.5rem, 1fr)); gap: 1.5rem; }
+.tafel {
+  background: var(--leinen-hell); border: 3px solid var(--naht);
+  outline: 2px dashed var(--beige); outline-offset: -10px;
+  padding: 1.6rem 1.5rem 1.4rem; display: grid; gap: .6rem; align-content: start; min-width: 0;
+}
+.tafel svg { width: 72px; height: 72px; }
+.tafel h3 { font-size: 1.5rem; color: var(--naht); }
+.tafel p { margin: 0; }
+.angaben {
+  display: flex; flex-wrap: wrap; gap: .3rem .9rem; margin: .4rem 0 0; padding-top: .7rem;
+  border-top: var(--naht-strich); font-family: var(--f-label); letter-spacing: .04em; font-size: .98rem;
+  font-variant-numeric: tabular-nums;
+}
+.angaben dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.angaben dd { margin: 0; }
+.hinweis { font-size: .95rem; font-style: italic; color: var(--waid); margin: 0; }
+
+/* Ablauf */
+.ablauf { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.25rem; position: relative; }
+.ablauf li { display: grid; gap: .35rem; align-content: start; padding-top: 1rem; border-top: 3px dashed var(--salbei); min-width: 0; }
+.ablauf .ziffer { font-family: var(--f-titel); font-size: 1.9rem; color: var(--ocker); line-height: 1; -webkit-text-stroke: .6px var(--naht); }
+.ablauf h3 { font-size: 1.25rem; }
+.ablauf p { margin: 0; font-size: 1.02rem; }
+
+/* Termine */
+.termine-rahmen { overflow-x: auto; border: 3px solid var(--naht); background: var(--leinen-hell); }
+table { width: 100%; border-collapse: collapse; min-width: 30rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: .75rem 1rem; border-bottom: var(--naht-strich); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color: var(--waid); background: var(--leinen-dunkel); }
+.marke-bsp { font-family: var(--f-label); font-size: .85rem; letter-spacing: .06em; color: var(--krapp); border: 1px dashed var(--krapp); padding: 0 .35rem; margin-left: .4rem; white-space: nowrap; }
+
+/* Kontakt */
+.kontakt { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.5rem; }
+.kontakt .tafel { gap: .8rem; }
+.adresse { font-family: var(--f-label); font-size: 1.2rem; letter-spacing: .03em; word-break: break-all; user-select: all; }
+.zeile { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.status { font-size: .95rem; color: var(--salbei); min-height: 1.4em; }
+
+/* Fuß */
+.fuss .innen { padding-block: 1.5rem 2rem; display: flex; flex-wrap: wrap; gap: .75rem 2rem; justify-content: space-between; align-items: baseline; }
+.fuss .finis { font-family: var(--f-titel); letter-spacing: .3em; color: var(--waid); }
+.fuss ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.25rem; flex-wrap: wrap; }
+
+/* Stickerei im SVG */
+.st { stroke: var(--naht); stroke-width: 2.2; stroke-dasharray: 5 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.st-fein { stroke: var(--naht); stroke-width: 1.5; stroke-dasharray: 3 1.6; stroke-linecap: round; fill: none; }
+.tit { font-family: var(--f-titel); fill: var(--waid); letter-spacing: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Gemeinsame Muster für Bordüren und Stoffstruktur -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="gelegt" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#26303d" stroke-opacity=".13" stroke-width="1.2"/>
+    </pattern>
+    <filter id="wolle" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.8"/>
+    </filter>
+    <pattern id="borte" width="240" height="56" patternUnits="userSpaceOnUse">
+      <rect width="240" height="56" fill="#d8c9a3"/>
+      <rect y="0" width="240" height="56" fill="url(#gelegt)"/>
+      <line x1="0" y1="3" x2="240" y2="3" stroke="#26303d" stroke-width="3"/>
+      <line x1="0" y1="53" x2="240" y2="53" stroke="#26303d" stroke-width="3"/>
+      <!-- schräge Stege, wie im Original -->
+      <path d="M2 50 L22 6 L30 6 L10 50z" fill="#9e3f2b" class="st"/>
+      <path d="M122 50 L142 6 L150 6 L130 50z" fill="#66744a" class="st"/>
+      <!-- Vogel -->
+      <g transform="translate(72 40)">
+        <path d="M-16 -6 Q-4 -20 12 -12 Q16 -4 8 0 Q-6 4 -16 -6z" fill="#c29236" class="st"/>
+        <path d="M-16 -6 L-28 -14 L-26 -2z" fill="#34495e" class="st"/>
+        <circle cx="12" cy="-16" r="5" fill="#c29236" class="st"/>
+        <path d="M16 -17 L23 -15 L16 -13z" fill="#9e3f2b"/>
+        <path d="M-6 -12 Q2 -26 10 -24" fill="none" class="st"/>
+        <line x1="-2" y1="1" x2="-4" y2="10" class="st"/><line x1="4" y1="0" x2="5" y2="10" class="st"/>
+      </g>
+      <!-- Tier -->
+      <g transform="translate(192 44)">
+        <path d="M-20 -14 Q0 -24 18 -14 Q20 -6 14 -4 L-16 -4 Q-22 -8 -20 -14z" fill="#34495e" class="st"/>
+        <circle cx="21" cy="-19" r="6" fill="#34495e" class="st"/>
+        <path d="M24 -24 L27 -31 L28 -22z" fill="#34495e"/>
+        <line x1="-14" y1="-5" x2="-16" y2="6" class="st"/><line x1="-7" y1="-5" x2="-6" y2="6" class="st"/>
+        <line x1="7" y1="-5" x2="6" y2="6" class="st"/><line x1="13" y1="-5" x2="15" y2="6" class="st"/>
+        <path d="M-20 -12 Q-32 -22 -26 -32 Q-22 -36 -20 -30" fill="none" class="st"/>
+      </g>
+    </pattern>
+  </defs>
+</svg>
+
+<svg class="borte" aria-hidden="true" focusable="false"><rect width="100%" height="56" fill="url(#borte)"/></svg>
+
+<header class="kopf">
+  <div class="innen">
+    <a class="marke" href="#start" aria-label="Schildwall Met, zum Anfang">
+      <svg viewBox="-24 -24 48 48" aria-hidden="true">
+        <circle r="21" fill="#9e3f2b" class="st"/>
+        <path d="M0 -21 V21 M-21 0 H21" class="st-fein"/>
+        <circle r="6" fill="#c29236" class="st"/>
+      </svg>
+      Schildwall Met
+    </a>
+    <nav aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="#sorten">Sorten</a></li>
+        <li><a href="#ablauf">So entsteht er</a></li>
+        <li><a href="#termine">Termine</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="innen">
+    <p class="entwurf"><strong>Entwurf.</strong> Sorten, Preise, Termine und Kontaktdaten sind Platzhalter, bis die Inhalte der bisherigen Seite übernommen sind.</p>
+  </div>
+</header>
+
+<main id="start">
+  <section class="hero">
+    <div class="innen">
+      <p class="augenbraue">Met aus eigener Hand</p>
+      <h1><span class="lat">HIC EST</span>Schildwall Met</h1>
+      <p class="lead">Honigwein, in kleinen Mengen angesetzt, mit Geduld vergoren und monatelang gereift. Für die Tafel, das Lager und alle, die zusammenstehen.</p>
+      <div class="knoepfe">
+        <a class="knopf" href="#sorten">Zu den Sorten</a>
+        <a class="knopf zweit" href="#kontakt">Met bestellen</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="teppich" aria-label="Bildteppich: wie unser Met entsteht">
+    <svg class="borte" aria-hidden="true" focusable="false"><rect width="100%" height="56" fill="url(#borte)"/></svg>
+    <div class="fries" tabindex="0" role="img" aria-label="Gestickte Szenen: Bienen sammeln Honig, der Met wird im Kessel angesetzt, Krieger bilden einen Schildwall, und an der Tafel wird getrunken.">
+      <svg id="fries" viewBox="0 0 1600 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+    </div>
+    <svg class="borte" aria-hidden="true" focusable="false"><rect width="100%" height="56" fill="url(#borte)"/></svg>
+  </section>
+  <div class="innen">
+    <p class="fries-hinweis">Der Teppich erzählt in vier Bildern, wie aus Honig Met wird.<span class="mobil"> Zum Weiterlesen seitlich wischen.</span></p>
+  </div>
+
+  <section class="abschnitt" id="sorten">
+    <div class="innen">
+      <div class="kopfzeile">
+        <span class="titulus">HIC SUNT MEDI</span>
+        <h2>Unsere Sorten</h2>
+        <p>Jede Flasche stammt aus einem kleinen Ansatz. Deshalb schmeckt jeder Jahrgang ein wenig anders.</p>
+      </div>
+      <div class="sorten">
+        <article class="tafel">
+          <svg viewBox="-40 -40 80 80" data-motiv="horn" aria-hidden="true"></svg>
+          <h3>Schildwall Klassisch</h3>
+          <p>Der Ursprung: Honig, Wasser, Hefe. Goldgelb, rund und mild süß.</p>
+          <dl class="angaben"><dt>Menge</dt><dd>0,75 l</dd><dt>Alkohol</dt><dd>ca. 11 % vol.</dd><dt>Preis</dt><dd>Preis folgt</dd></dl>
+        </article>
+        <article class="tafel">
+          <svg viewBox="-40 -40 80 80" data-motiv="kirsche" aria-hidden="true"></svg>
+          <h3>Kirschmet</h3>
+          <p>Mit Sauerkirschen angesetzt. Tiefrot, fruchtig und mit einer herben Note im Abgang.</p>
+          <dl class="angaben"><dt>Menge</dt><dd>0,75 l</dd><dt>Alkohol</dt><dd>ca. 10 % vol.</dd><dt>Preis</dt><dd>Preis folgt</dd></dl>
+        </article>
+        <article class="tafel">
+          <svg viewBox="-40 -40 80 80" data-motiv="stern" aria-hidden="true"></svg>
+          <h3>Wintermet</h3>
+          <p>Mit Zimt, Nelke und Orangenschale. Schmeckt kalt aus dem Horn und warm aus dem Becher.</p>
+          <dl class="angaben"><dt>Menge</dt><dd>0,75 l</dd><dt>Alkohol</dt><dd>ca. 11 % vol.</dd><dt>Preis</dt><dd>Preis folgt</dd></dl>
+        </article>
+      </div>
+      <p class="hinweis">Platzhalter: Namen, Beschreibungen und Werte bitte durch die echten Sorten ersetzen.</p>
+    </div>
+  </section>
+
+  <section class="abschnitt" id="ablauf">
+    <div class="innen">
+      <div class="kopfzeile">
+        <span class="titulus">HIC HYDROMELI FIT</span>
+        <h2>So entsteht unser Met</h2>
+        <p>Vom Honig bis zur Flasche vergehen viele Monate. Abkürzen lässt sich davon nichts.</p>
+      </div>
+      <ol class="ablauf">
+        <li><span class="ziffer" aria-hidden="true">I</span><h3>Honig wählen</h3><p>Alles beginnt mit dem Honig. Er bestimmt Farbe, Duft und Süße.</p></li>
+        <li><span class="ziffer" aria-hidden="true">II</span><h3>Ansetzen</h3><p>Der Honig wird in Wasser gelöst und mit Hefe angesetzt.</p></li>
+        <li><span class="ziffer" aria-hidden="true">III</span><h3>Gären</h3><p>Einige Wochen lang macht die Hefe aus dem Zucker Alkohol.</p></li>
+        <li><span class="ziffer" aria-hidden="true">IV</span><h3>Reifen</h3><p>Danach ruht der Met mehrere Monate, bis er klar und rund ist.</p></li>
+        <li><span class="ziffer" aria-hidden="true">V</span><h3>Abfüllen</h3><p>Erst dann kommt er in die Flasche und an eure Tafel.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="abschnitt" id="termine">
+    <div class="innen">
+      <div class="kopfzeile">
+        <span class="titulus">UBI NOS INVENIES</span>
+        <h2>Wo es uns gibt</h2>
+        <p>Auf Märkten und Festen steht unser Stand. Neue Termine tragen wir hier ein.</p>
+      </div>
+      <div class="termine-rahmen">
+        <table>
+          <thead><tr><th scope="col">Wann</th><th scope="col">Was</th><th scope="col">Wo</th></tr></thead>
+          <tbody>
+            <tr><td>Datum folgt</td><td>Mittelaltermarkt<span class="marke-bsp">Beispiel</span></td><td>Ort folgt</td></tr>
+            <tr><td>Datum folgt</td><td>Wikingerfest<span class="marke-bsp">Beispiel</span></td><td>Ort folgt</td></tr>
+            <tr><td>Datum folgt</td><td>Weihnachtsmarkt<span class="marke-bsp">Beispiel</span></td><td>Ort folgt</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="abschnitt" id="kontakt">
+    <div class="innen">
+      <div class="kopfzeile">
+        <span class="titulus">SCRIBE NOBIS</span>
+        <h2>Kontakt und Bestellung</h2>
+        <p>Schreibt uns, welche Sorte und wie viele Flaschen ihr möchtet. Wir melden uns mit Preis und Versand.</p>
+      </div>
+      <div class="kontakt">
+        <div class="tafel">
+          <h3>E-Mail</h3>
+          <p class="adresse" id="adresse">kontakt@schildwall-met.de</p>
+          <div class="zeile">
+            <a class="knopf" href="mailto:kontakt@schildwall-met.de">E-Mail schreiben</a>
+            <button class="knopf zweit" type="button" id="kopieren">Adresse kopieren</button>
+          </div>
+          <p class="status" id="status" aria-live="polite"></p>
+          <p class="hinweis">Platzhalter-Adresse, bitte prüfen.</p>
+        </div>
+        <div class="tafel">
+          <h3>Jugendschutz</h3>
+          <p>Met ist ein alkoholisches Getränk. Wir geben ihn nur an Personen ab 16 Jahren ab und prüfen beim Versand das Alter.</p>
+          <p>Bitte genießt verantwortungsvoll.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="fuss">
+  <svg class="borte" aria-hidden="true" focusable="false"><rect width="100%" height="56" fill="url(#borte)"/></svg>
+  <div class="innen">
+    <span class="finis">FINIS</span>
+    <ul>
+      <li><a href="#impressum">Impressum</a></li>
+      <li><a href="#datenschutz">Datenschutz</a></li>
+    </ul>
+    <span>© 2026 Schildwall Met</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const C = { krapp:'#9e3f2b', ocker:'#c29236', salbei:'#66744a', waid:'#34495e', naht:'#26303d', leinen:'#f1e8d2', beige:'#b39d70', grau:'#8d8f86' };
+
+  /* Arm als zwei Linien: dunkle Kontur, farbige Füllung, helle Hand */
+  function arm(x1, y1, x2, y2, c) {
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C.naht}" stroke-width="9" stroke-linecap="round"/>` +
+           `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="5" stroke-linecap="round"/>` +
+           `<circle cx="${x2}" cy="${y2}" r="3.6" fill="${C.leinen}" class="st"/>`;
+  }
+
+  /* Figur, Füße bei (0,0), schaut nach rechts. o.arme: Liste von Endpunkten ab Schulter (4,-72) */
+  function figur(x, y, o) {
+    o = Object.assign({ rock: C.krapp, bein: C.salbei, haar: C.waid, dir: 1, arme: [[16, -46]], helm: false, vorne: '', hinten: '' }, o);
+    const arme = o.arme.map(a => arm(4, -72, a[0], a[1], o.rock)).join('');
+    const kopf = o.helm
+      ? `<circle cx="3" cy="-89" r="9" fill="${C.leinen}" class="st"/><path d="M-8 -90 L3 -110 L14 -90z" fill="${C.grau}" class="st"/><line x1="8" y1="-92" x2="8" y2="-82" stroke="${C.naht}" stroke-width="2.5"/>`
+      : `<circle cx="3" cy="-89" r="9" fill="${C.leinen}" class="st"/><path d="M-7 -91 Q3 -103 12 -92 Q4 -95 -7 -91z" fill="${o.haar}" class="st"/>`;
+    return `<g transform="translate(${x} ${y}) scale(${o.dir} 1)">${o.hinten}
+      <path d="M-9 -38 L-14 0 h9 L-1 -38z" fill="${o.bein}" class="st"/>
+      <path d="M2 -38 L7 0 h9 L11 -38z" fill="${o.bein}" class="st"/>
+      <path d="M-11 -78 Q2 -84 14 -78 L19 -34 Q2 -28 -17 -34z" fill="${o.rock}" class="st"/>
+      <path d="M-13 -48 Q2 -44 17 -48" class="st-fein"/>
+      ${kopf}${arme}${o.vorne}</g>`;
+  }
+
+  function schild(cx, cy, c, c2) {
+    return `<circle cx="${cx}" cy="${cy}" r="23" fill="${c}" class="st"/>
+      <path d="M${cx} ${cy-23} V${cy+23} M${cx-23} ${cy} H${cx+23}" stroke="${c2}" stroke-width="5"/>
+      <circle cx="${cx}" cy="${cy}" r="23" fill="none" class="st"/>
+      <circle cx="${cx}" cy="${cy}" r="6" fill="${C.grau}" class="st"/>`;
+  }
+
+  function krieger(x, y, rock, sch, sch2) {
+    const speer = `<line x1="22" y1="-138" x2="12" y2="0" stroke="${C.naht}" stroke-width="3"/><path d="M22 -150 L27 -136 L17 -137z" fill="${C.grau}" class="st"/>`;
+    return figur(x, y, { rock, bein: C.waid, helm: true, arme: [[18, -60]], hinten: speer, vorne: schild(18, -58, sch, sch2) });
+  }
+
+  function korb(x, y) {
+    let s = `<g transform="translate(${x} ${y})"><path d="M-26 0 Q-30 -46 0 -52 Q30 -46 26 0z" fill="${C.ocker}" class="st"/>`;
+    [-12, -24, -36].forEach((h, i) => { const w = 27 - i * 4; s += `<path d="M${-w} ${h} Q0 ${h - 6} ${w} ${h}" class="st-fein"/>`; });
+    return s + `<path d="M-6 0 Q0 -10 6 0z" fill="${C.naht}"/></g>`;
+  }
+
+  function biene(x, y, r) {
+    return `<g transform="translate(${x} ${y}) rotate(${r})">
+      <ellipse cx="-2" cy="-7" rx="5" ry="7" fill="${C.leinen}" class="st-fein" transform="rotate(-25)"/>
+      <ellipse cx="4" cy="-7" rx="5" ry="7" fill="${C.leinen}" class="st-fein" transform="rotate(20)"/>
+      <ellipse rx="9" ry="5" fill="${C.ocker}" class="st"/>
+      <line x1="-3" y1="-5" x2="-3" y2="5" stroke="${C.naht}" stroke-width="2"/><line x1="3" y1="-5" x2="3" y2="5" stroke="${C.naht}" stroke-width="2"/></g>`;
+  }
+
+  /* Baum nach Bayeux-Art: Stamm, verschlungene Äste, große Blattlappen */
+  function baum(x, y) {
+    const ast = (d, c) => `<path d="${d}" fill="none" stroke="${C.naht}" stroke-width="10" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`;
+    return `<g transform="translate(${x} ${y})">
+      <path d="M-8 0 Q-4 -40 -5 -90 L5 -90 Q4 -40 8 0z" fill="${C.beige}" class="st"/>
+      ${ast('M0 -88 C-30 -110 -46 -150 -22 -178 C-8 -192 12 -180 4 -164', C.salbei)}
+      ${ast('M0 -88 C30 -110 46 -150 22 -178 C8 -192 -12 -180 -4 -164', C.ocker)}
+      ${ast('M0 -120 C-18 -136 -10 -160 0 -200', C.krapp)}
+      <path d="M-40 -150 q-22 -6 -18 -28 q16 4 18 28z" fill="${C.salbei}" class="st"/>
+      <path d="M40 -150 q22 -6 18 -28 q-16 4 -18 28z" fill="${C.salbei}" class="st"/>
+      <path d="M0 -200 q-14 -14 0 -32 q14 18 0 32z" fill="${C.ocker}" class="st"/>
+      <path d="M-26 -112 q-20 4 -26 -12 q18 -8 26 12z" fill="${C.waid}" class="st"/>
+      <path d="M26 -112 q20 4 26 -12 q-18 -8 -26 12z" fill="${C.waid}" class="st"/></g>`;
+  }
+
+  function kessel(x, y) {
+    return `<g transform="translate(${x} ${y})">
+      <line x1="-58" y1="0" x2="0" y2="-150" stroke="${C.naht}" stroke-width="4"/>
+      <line x1="58" y1="0" x2="0" y2="-150" stroke="${C.naht}" stroke-width="4"/>
+      <line x1="0" y1="-150" x2="0" y2="-92" class="st-fein"/>
+      <path d="M-24 0 L-16 -30 L-8 -8 L0 -36 L8 -8 L16 -30 L24 0z" fill="${C.krapp}" class="st"/>
+      <path d="M-12 0 L-6 -18 L0 -6 L6 -18 L12 0z" fill="${C.ocker}"/>
+      <path d="M-40 -88 Q-40 -34 0 -34 Q40 -34 40 -88z" fill="${C.waid}" class="st"/>
+      <ellipse cx="0" cy="-88" rx="40" ry="7" fill="${C.ocker}" class="st"/>
+      <path d="M-12 -100 q-8 -12 0 -22 q8 -10 0 -22 M10 -100 q-8 -12 0 -22 q8 -10 0 -22" class="st-fein"/></g>`;
+  }
+
+  function horn(x, y, rot) {
+    return `<g transform="translate(${x} ${y}) rotate(${rot})"><path d="M0 0 Q20 -2 30 -24 L22 -27 Q15 -10 -1 -7z" fill="${C.ocker}" class="st"/><path d="M28 -25 L24 -26" stroke="${C.krapp}" stroke-width="4"/></g>`;
+  }
+
+  function topf(x, y, c) {
+    return `<g transform="translate(${x} ${y})"><path d="M-9 0 Q-12 -14 -7 -18 h14 Q12 -14 9 0z" fill="${c}" class="st"/><line x1="-8" y1="-18" x2="8" y2="-18" stroke="${C.naht}" stroke-width="3"/></g>`;
+  }
+
+  function boden() {
+    let d = 'M0 262';
+    for (let x = 0; x < 1600; x += 40) d += ` Q${x + 20} ${x % 80 ? 268 : 256} ${x + 40} 262`;
+    let s = `<path d="${d} L1600 300 L0 300z" fill="${C.beige}" opacity=".35"/><path d="${d}" fill="none" stroke="${C.salbei}" stroke-width="5" stroke-dasharray="7 2.5"/>`;
+    for (let x = 30; x < 1600; x += 97) s += `<path d="M${x} 262 l-4 -10 M${x} 262 l0 -12 M${x} 262 l4 -10" class="st-fein"/>`;
+    return s;
+  }
+
+  const G = 258; // Standlinie
+  let s = boden();
+
+  // Tituli über den Szenen
+  [['HIC APES MEL COLLIGUNT', 190], ['HIC HYDROMELI FIT', 600], ['HIC EST MURUS SCUTORUM', 1005], ['ET HIC BIBUNT ET GAUDENT', 1425]]
+    .forEach(t => s += `<text class="tit" x="${t[1]}" y="40" text-anchor="middle" font-size="17">${t[0]}</text>`);
+
+  // I. Imker mit Bienenkörben
+  s += `<rect x="40" y="${G - 30}" width="110" height="7" fill="${C.krapp}" class="st"/><line x1="50" y1="${G - 23}" x2="50" y2="${G}" class="st"/><line x1="140" y1="${G - 23}" x2="140" y2="${G}" class="st"/>`;
+  s += korb(70, G - 30) + korb(122, G - 30);
+  s += figur(225, G, { rock: C.salbei, bein: C.krapp, haar: C.ocker, dir: -1, arme: [[24, -52]], vorne: topf(26, -40, C.waid) });
+  s += `<rect x="285" y="${G - 30}" width="70" height="7" fill="${C.waid}" class="st"/><line x1="292" y1="${G - 23}" x2="292" y2="${G}" class="st"/><line x1="348" y1="${G - 23}" x2="348" y2="${G}" class="st"/>`;
+  s += korb(320, G - 30);
+  [[110, 110, 10], [160, 140, -15], [200, 95, 20], [280, 120, -10], [330, 150, 15], [250, 70, 5], [60, 130, -20]].forEach(b => s += biene(b[0], b[1], b[2]));
+
+  s += baum(395, G);
+
+  // II. Brauer am Kessel
+  s += figur(500, G, { rock: C.waid, bein: C.ocker, haar: C.krapp, arme: [[30, -98], [34, -84]],
+    vorne: `<line x1="32" y1="-92" x2="86" y2="-40" stroke="${C.naht}" stroke-width="4"/><ellipse cx="88" cy="-38" rx="7" ry="4" fill="${C.beige}" class="st" transform="rotate(45 88 -38)"/>` });
+  s += kessel(600, G);
+  s += figur(710, G, { rock: C.krapp, bein: C.waid, haar: C.salbei, dir: -1, arme: [[20, -96], [-10, -96]], vorne: topf(6, -100, C.ocker) });
+
+  s += baum(800, G);
+
+  // III. Der Schildwall
+  const farben = [[C.krapp, C.ocker, C.krapp], [C.salbei, C.waid, C.ocker], [C.ocker, C.krapp, C.waid], [C.waid, C.ocker, C.salbei], [C.krapp, C.salbei, C.ocker], [C.salbei, C.krapp, C.leinen]];
+  farben.forEach((f, i) => s += krieger(870 + i * 48, G, f[0], f[1], f[2]));
+
+  s += baum(1215, G);
+
+  // IV. Das Gelage
+  const gaeste = [[1290, C.waid, C.ocker, [[30, -110]], 1], [1360, C.krapp, C.salbei, [[24, -60]], 1], [1490, C.salbei, C.krapp, [[-24, -112]], 1], [1555, C.ocker, C.waid, [[26, -108]], -1]];
+  gaeste.forEach(g => s += figur(g[0], G - 4, { rock: g[1], bein: g[2], arme: g[3], dir: g[4] }));
+  s += horn(1290 + 30, G - 4 - 110, -10) + horn(1490 - 24, G - 4 - 112, 200) + horn(1555 - 26, G - 4 - 108, 190);
+  s += `<path d="M1255 ${G - 52} H1595 V${G - 44} H1255z" fill="${C.krapp}" class="st"/>
+        <path d="M1260 ${G - 44} q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0 q12 14 24 0z" fill="${C.leinen}" class="st"/>
+        <line x1="1270" y1="${G - 32}" x2="1270" y2="${G}" class="st"/><line x1="1580" y1="${G - 32}" x2="1580" y2="${G}" class="st"/>`;
+  s += topf(1330, G - 52, C.ocker) + topf(1430, G - 52, C.waid);
+  s += `<ellipse cx="1395" cy="${G - 58}" rx="18" ry="6" fill="${C.beige}" class="st"/><circle cx="1388" cy="${G - 62}" r="5" fill="${C.krapp}" class="st"/><circle cx="1400" cy="${G - 63}" r="5" fill="${C.ocker}" class="st"/>`;
+
+  const fries = document.getElementById('fries');
+  fries.innerHTML = `<g filter="url(#wolle)">${s}</g><rect width="1600" height="300" fill="url(#gelegt)" pointer-events="none"/>`;
+
+  // Kleine Motive auf den Sortentafeln
+  const motive = {
+    horn: `<g transform="translate(-14 22) scale(1.3)">${horn(0, 0, -20).replace(/translate\(0 0\) /, '')}</g><path d="M-30 30 H30" class="st-fein"/>`,
+    kirsche: `<path d="M-12 8 Q-6 -24 10 -30 M14 10 Q8 -16 10 -30" fill="none" stroke="${C.salbei}" stroke-width="3"/><path d="M10 -30 q16 -6 22 6 q-14 6 -22 -6z" fill="${C.salbei}" class="st"/><circle cx="-12" cy="16" r="12" fill="${C.krapp}" class="st"/><circle cx="15" cy="18" r="12" fill="${C.krapp}" class="st"/>`,
+    stern: `<path d="M0 -32 L8 -10 L32 -10 L12 4 L20 28 L0 14 L-20 28 L-12 4 L-32 -10 L-8 -10z" fill="${C.ocker}" class="st"/><circle r="7" fill="${C.krapp}" class="st"/>`
+  };
+  document.querySelectorAll('[data-motiv]').forEach(el => { el.innerHTML = motive[el.dataset.motiv] || ''; });
+
+  // Adresse kopieren
+  const knopf = document.getElementById('kopieren'), status = document.getElementById('status'), adresse = document.getElementById('adresse');
+  knopf.addEventListener('click', () => {
+    const text = adresse.textContent.trim();
+    const auswaehlen = () => { const r = document.createRange(); r.selectNodeContents(adresse); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); status.textContent = 'Adresse markiert, jetzt mit Strg+C kopieren.'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => { status.textContent = 'Adresse kopiert.'; }, auswaehlen);
+    } else { auswaehlen(); }
+  });
+})();
+</script>
+</body>
+</html>
