@@ -258,14 +258,14 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
         <!-- Schaft -->
         <path d="M-3.6 -50 L-4 58 Q0 61 4 58 L3.6 -50z" fill="#3a2620" stroke="#24170f" stroke-width="1.2"/>
         <path d="M-1 -40 V54" stroke="#6b4a35" stroke-width=".8"/>
-        <!-- Bartaxt: Tülle, Nacken, Blatt mit Bart und geschliffener Schneide -->
-        <path d="M-6 -50 H6 V-30 H-6z" fill="#5a4a40" stroke="#24170f" stroke-width="1.4"/>
-        <path d="M-6 -46 H-11 V-34 H-6" fill="#5a4a40" stroke="#24170f" stroke-width="1.4"/>
-        <g transform="translate(0 4) translate(6 -40) scale(.88) translate(-6 40)">
+        <!-- Doppelte Bartaxt: Tülle, zwei Blätter mit Bart und geschliffener Schneide -->
+        <g id="logo-blatt" transform="translate(0 4) translate(6 -40) scale(.88) translate(-6 40)">
         <path d="M6 -48 C17 -49 27 -53 38 -60 C49 -42 48 -16 36 2 C27 -6 22 -18 17 -26 C13 -31 9 -32 6 -32z" fill="#a8291f" stroke="#24170f" stroke-width="1.6" stroke-linejoin="round"/>
         <path d="M37 -55 C45 -40 45 -17 35 -2 C39 -19 39 -38 33 -52z" fill="#cf4a3c"/>
         <path d="M9 -44 C18 -45 25 -48 31 -52" fill="none" stroke="#6e1a14" stroke-width="1.2" stroke-dasharray="3 1.8"/>
         </g>
+        <use href="#logo-blatt" transform="scale(-1 1)"/>
+        <path d="M-6 -50 H6 V-30 H-6z" fill="#5a4a40" stroke="#24170f" stroke-width="1.4"/>
         <circle cx="0" cy="-40" r="1.8" fill="#c9b99b"/>
         <path d="M0 -24 l3.5 5 l-3.5 5 l-3.5 -5z" fill="#a8291f" stroke="#24170f" stroke-width=".8"/>
         <!-- Wicklung und Schnüre -->
