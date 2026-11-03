@@ -210,6 +210,9 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
     <pattern id="gelegt" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
       <line x1="0" y1="0" x2="0" y2="5" stroke="#24170f" stroke-opacity=".13" stroke-width="1.2"/>
     </pattern>
+    <pattern id="ringe" width="4.5" height="4.5" patternUnits="userSpaceOnUse">
+      <circle cx="2.25" cy="2.25" r="1.4" fill="none" stroke="#24170f" stroke-opacity=".75" stroke-width=".8"/>
+    </pattern>
     <filter id="wolle" x="-5%" y="-5%" width="110%" height="110%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="1.8"/>
@@ -441,38 +444,75 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 (function () {
   const C = { krapp:'#a8291f', ocker:'#a37a4c', salbei:'#6b4a35', waid:'#3a2620', naht:'#24170f', leinen:'#e8dec9', beige:'#b8a587', grau:'#8c7c6a' };
 
-  /* Arm als zwei Linien: dunkle Kontur, farbige Füllung, helle Hand */
+  /* Zweite Beinfarbe: auf dem Teppich haben die Beine oft verschiedene Farben */
+  const zweitbein = { [C.krapp]: C.ocker, [C.salbei]: C.krapp, [C.waid]: C.ocker, [C.ocker]: C.salbei, [C.beige]: C.krapp };
+
+  /* Arm: dünn, mit großer Hand und abgespreiztem Daumen wie auf dem Teppich */
   function arm(x1, y1, x2, y2, c) {
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C.naht}" stroke-width="9" stroke-linecap="round"/>` +
-           `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="5" stroke-linecap="round"/>` +
-           `<circle cx="${x2}" cy="${y2}" r="3.6" fill="${C.leinen}" class="st"/>`;
+    const dx = x2 - x1, dy = y2 - y1, l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l;
+    const hx = x2 + ux * 2.5, hy = y2 + uy * 2.5, w = Math.atan2(dy, dx) * 180 / Math.PI;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C.naht}" stroke-width="7" stroke-linecap="round"/>` +
+           `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="3.6" stroke-linecap="round"/>` +
+           `<ellipse cx="${hx}" cy="${hy}" rx="5.6" ry="3.2" transform="rotate(${w} ${hx} ${hy})" fill="${C.leinen}" class="st-fein"/>` +
+           `<line x1="${hx - ux * 2}" y1="${hy - uy * 2}" x2="${hx - ux * 3 - uy * 5}" y2="${hy - uy * 3 + ux * 5}" stroke="${C.naht}" stroke-width="1.6" stroke-linecap="round"/>`;
   }
 
-  /* Figur, Füße bei (0,0), schaut nach rechts. o.arme: Liste von Endpunkten ab Schulter (4,-72) */
+  /* Bein mit Kreuzbändern und spitzem Schuh. Hüfte bei y=-30, Fuß bei y=0 */
+  function bein(x0, x1, c) {
+    let b = `<path d="M${x0 - 3.2} -31 L${x1 - 2.4} -3 L${x1 + 2.4} -3 L${x0 + 3.2} -31z" fill="${c}" class="st"/>`;
+    [.3, .55, .8].forEach(t => {
+      const px = x0 + (x1 - x0) * t, py = -31 + 28 * t;
+      b += `<line x1="${px - 2.6}" y1="${py - 2}" x2="${px + 2.6}" y2="${py + 2}" stroke="${C.leinen}" stroke-width="1.3"/>`;
+    });
+    return b + `<path d="M${x1 - 4} -3.5 L${x1 + 3} -3.5 L${x1 + 10} 0 L${x1 - 4} 0z" fill="${C.naht}"/>`;
+  }
+
+  /* Figur im Stil des Teppichs: Profilkopf mit langer Nase, schlanker Leib, ausgestellter Kittel
+     mit Saumborte, verschiedenfarbige Beine mit Kreuzbändern. Füße bei (0,0), schaut nach rechts.
+     o.arme: Liste von Endpunkten ab Schulter (4,-72). o.helm: Kegelhelm mit Nasal und Kettenhemd. */
   function figur(x, y, o) {
-    o = Object.assign({ rock: C.krapp, bein: C.salbei, haar: C.waid, dir: 1, arme: [[16, -46]], helm: false, vorne: '', hinten: '' }, o);
+    o = Object.assign({ rock: C.krapp, bein: C.salbei, haar: C.waid, dir: 1, arme: [[16, -46]], helm: false, bart: false, neig: 0, vorne: '', hinten: '' }, o);
+    const b2 = o.bein2 || zweitbein[o.bein] || C.ocker;
+    const saum = o.rock === C.ocker ? C.krapp : C.ocker;
     const arme = o.arme.map(a => arm(4, -72, a[0], a[1], o.rock)).join('');
-    const kopf = o.helm
-      ? `<circle cx="3" cy="-89" r="9" fill="${C.leinen}" class="st"/><path d="M-8 -90 L3 -110 L14 -90z" fill="${C.grau}" class="st"/><line x1="8" y1="-92" x2="8" y2="-82" stroke="${C.naht}" stroke-width="2.5"/>`
-      : `<circle cx="3" cy="-89" r="9" fill="${C.leinen}" class="st"/><path d="M-7 -91 Q3 -103 12 -92 Q4 -95 -7 -91z" fill="${o.haar}" class="st"/>`;
-    return `<g transform="translate(${x} ${y}) scale(${o.dir} 1)">${o.hinten}
-      <path d="M-9 -38 L-14 0 h9 L-1 -38z" fill="${o.bein}" class="st"/>
-      <path d="M2 -38 L7 0 h9 L11 -38z" fill="${o.bein}" class="st"/>
-      <path d="M-11 -78 Q2 -84 14 -78 L19 -34 Q2 -28 -17 -34z" fill="${o.rock}" class="st"/>
-      <path d="M-13 -48 Q2 -44 17 -48" class="st-fein"/>
-      ${kopf}${arme}${o.vorne}</g>`;
+    const rockPfad = 'M-5 -78 Q3 -81 11 -78 L13 -62 Q15 -44 21 -28 Q3 -23 -16 -28 Q-9 -45 -7 -62z';
+    const kopfPfad = 'M-3 -82 Q-6 -90 -2 -95 Q3 -99 8 -95 Q10 -92 9.5 -90 L14 -86 L9.5 -85 Q10.5 -82 8 -80 Q4 -78 1 -79 Q-2 -79 -3 -82z';
+    const kopf = `<rect x="0" y="-81" width="5" height="5" fill="${C.leinen}"/>` +
+      `<path d="${kopfPfad}" fill="${C.leinen}" class="st"/><circle cx="6.5" cy="-90" r="1" fill="${C.naht}"/>` +
+      (o.helm
+        ? `<path d="M-4.5 -90 L3 -107 L10.5 -90 Q3 -92.5 -4.5 -90z" fill="${C.grau}" class="st"/><path d="M-4 -91 Q3 -93.5 10 -91" stroke="${C.ocker}" stroke-width="2" fill="none"/><line x1="10" y1="-91" x2="11.5" y2="-83.5" stroke="${C.naht}" stroke-width="2.4" stroke-linecap="round"/>`
+        : `<path d="M-2 -95 Q3 -100.5 8.5 -95.5 Q5 -94 2 -94 Q-1 -93 -3.5 -89 Q-5 -93 -2 -95z" fill="${o.haar}" class="st-fein"/>`) +
+      (o.bart ? `<path d="M10 -84.5 Q7 -82 3.5 -83.5" stroke="${o.haar}" stroke-width="1.8" fill="none" stroke-linecap="round"/>` : '');
+    const kittel = `<path d="${rockPfad}" fill="${o.rock}"/>` +
+      `<path d="${rockPfad}" fill="url(#${o.helm ? 'ringe' : 'gelegt'})"/>` +
+      `<path d="${rockPfad}" fill="none" class="st"/>` +
+      `<path d="M-15 -32 Q3 -27 20 -32" stroke="${saum}" stroke-width="3" fill="none"/>` +
+      `<path d="M-7.5 -53 Q3 -50 14 -53" class="st-fein"/><path d="M4 -24 V-35" class="st-fein"/>`;
+    return `<g transform="translate(${x} ${y}) scale(${o.dir} 1) rotate(${o.neig})">${o.hinten}
+      ${bein(-3, -8, b2)}${bein(6, 11, o.bein)}${kittel}${kopf}${arme}${o.vorne}</g>`;
   }
 
   function schild(cx, cy, c, c2) {
-    return `<circle cx="${cx}" cy="${cy}" r="23" fill="${c}" class="st"/>
-      <path d="M${cx} ${cy-23} V${cy+23} M${cx-23} ${cy} H${cx+23}" stroke="${c2}" stroke-width="5"/>
-      <circle cx="${cx}" cy="${cy}" r="23" fill="none" class="st"/>
-      <circle cx="${cx}" cy="${cy}" r="6" fill="${C.grau}" class="st"/>`;
+    return `<circle cx="${cx}" cy="${cy}" r="21" fill="${c}" class="st"/>
+      <path d="M${cx} ${cy-21} V${cy+21} M${cx-21} ${cy} H${cx+21}" stroke="${c2}" stroke-width="4"/>
+      <circle cx="${cx}" cy="${cy}" r="21" fill="none" class="st"/>
+      <circle cx="${cx}" cy="${cy}" r="5" fill="${C.grau}" class="st"/>`;
   }
 
-  function krieger(x, y, rock, sch, sch2) {
-    const speer = `<line x1="22" y1="-138" x2="12" y2="0" stroke="${C.naht}" stroke-width="3"/><path d="M22 -150 L27 -136 L17 -137z" fill="${C.grau}" class="st"/>`;
-    return figur(x, y, { rock, bein: C.waid, helm: true, arme: [[18, -60]], hinten: speer, vorne: schild(18, -58, sch, sch2) });
+  /* Drachenschild, die typische Schildform auf dem Teppich, mit Punktborte */
+  function drachenschild(cx, cy, c, c2) {
+    const pfad = `M${cx - 14} ${cy - 22} Q${cx} ${cy - 30} ${cx + 14} ${cy - 22} L${cx + 12} ${cy + 6} L${cx} ${cy + 32} L${cx - 12} ${cy + 6}z`;
+    let pkt = '';
+    [[-10, -20], [0, -24], [10, -20], [11, -6], [9, 10], [4, 22], [-4, 22], [-9, 10], [-11, -6]].forEach(q => pkt += `<circle cx="${cx + q[0]}" cy="${cy + q[1]}" r="1.4" fill="${C.leinen}"/>`);
+    return `<path d="${pfad}" fill="${c}" class="st"/>
+      <path d="M${cx - 8} ${cy - 12} Q${cx - 2} ${cy - 2} ${cx - 8} ${cy + 6} Q${cx} ${cy + 14} ${cx - 2} ${cy + 22}" stroke="${c2}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      ${pkt}<circle cx="${cx}" cy="${cy - 6}" r="3.5" fill="${C.grau}" class="st-fein"/>`;
+  }
+
+  function krieger(x, y, rock, sch, sch2, i) {
+    const speer = `<line x1="24" y1="-140" x2="12" y2="0" stroke="${C.naht}" stroke-width="2.6"/><path d="M24.5 -152 L29 -138 L19.5 -139z" fill="${C.grau}" class="st"/>`;
+    const sch_ = i % 2 ? schild(19, -56, sch, sch2) : drachenschild(19, -58, sch, sch2);
+    return figur(x, y, { rock, bein: C.waid, helm: true, bart: i % 2 === 1, haar: C.salbei, arme: [[18, -60]], hinten: speer, vorne: sch_ });
   }
 
   function korb(x, y) {
@@ -544,7 +584,7 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
   // I. Imker mit Bienenkörben
   s += `<rect x="40" y="${G - 30}" width="110" height="7" fill="${C.krapp}" class="st"/><line x1="50" y1="${G - 23}" x2="50" y2="${G}" class="st"/><line x1="140" y1="${G - 23}" x2="140" y2="${G}" class="st"/>`;
   s += korb(70, G - 30) + korb(122, G - 30);
-  s += figur(225, G, { rock: C.salbei, bein: C.krapp, haar: C.ocker, dir: -1, arme: [[24, -52]], vorne: topf(26, -40, C.waid) });
+  s += figur(225, G, { neig: 6, rock: C.salbei, bein: C.krapp, haar: C.ocker, dir: -1, arme: [[24, -52]], vorne: topf(26, -40, C.waid) });
   s += `<rect x="285" y="${G - 30}" width="70" height="7" fill="${C.waid}" class="st"/><line x1="292" y1="${G - 23}" x2="292" y2="${G}" class="st"/><line x1="348" y1="${G - 23}" x2="348" y2="${G}" class="st"/>`;
   s += korb(320, G - 30);
   [[110, 110, 10], [160, 140, -15], [205, 112, 20], [280, 120, -10], [330, 150, 15], [250, 104, 5], [60, 130, -20]].forEach(b => s += biene(b[0], b[1], b[2]));
@@ -552,7 +592,7 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
   s += baum(395, G);
 
   // II. Brauer am Kessel
-  s += figur(500, G, { rock: C.waid, bein: C.ocker, haar: C.krapp, arme: [[30, -98], [34, -84]],
+  s += figur(500, G, { neig: 8, rock: C.waid, bein: C.ocker, haar: C.krapp, arme: [[30, -98], [34, -84]],
     vorne: `<line x1="32" y1="-92" x2="86" y2="-40" stroke="${C.naht}" stroke-width="4"/><ellipse cx="88" cy="-38" rx="7" ry="4" fill="${C.beige}" class="st" transform="rotate(45 88 -38)"/>` });
   s += kessel(600, G);
   s += figur(710, G, { rock: C.krapp, bein: C.waid, haar: C.salbei, dir: -1, arme: [[20, -96], [-10, -96]], vorne: topf(6, -100, C.ocker) });
@@ -561,7 +601,7 @@ th { font-family: var(--f-label); letter-spacing: .06em; font-weight: 700; color
 
   // III. Der Schildwall
   const farben = [[C.krapp, C.ocker, C.krapp], [C.salbei, C.waid, C.ocker], [C.ocker, C.krapp, C.waid], [C.waid, C.ocker, C.salbei], [C.krapp, C.salbei, C.ocker], [C.salbei, C.krapp, C.leinen]];
-  farben.forEach((f, i) => s += krieger(870 + i * 48, G, f[0], f[1], f[2]));
+  farben.forEach((f, i) => s += krieger(870 + i * 48, G, f[0], f[1], f[2], i));
 
   s += baum(1215, G);
 
